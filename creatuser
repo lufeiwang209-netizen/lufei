@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubii.ai - 创建角色</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .user-avatar::after {
+            content: '▼';
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            gap: 40px;
+            padding: 0 24px;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .sidebar h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .character-types {
+            list-style: none;
+        }
+        
+        .character-type {
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .character-type:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(8px);
+        }
+        
+        .character-type.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 48px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .content-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .content-title {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+        
+        .content-subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .gender-selection {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .gender-option {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #e1e5e9;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .gender-option:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-4px);
+        }
+        
+        .gender-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .gender-emoji {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        
+        .gender-label {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .image-creation-options {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+        }
+        
+        .creation-option {
+            flex: 1;
+            max-width: 200px;
+            padding: 32px 24px;
+            border: 3px dashed #e1e5e9;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .creation-option:hover {
+            border-color: #667eea;
+            border-style: solid;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-4px);
+        }
+        
+        .creation-option.selected {
+            border-color: #667eea;
+            border-style: solid;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+        
+        .option-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .option-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .option-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .next-button {
+            width: 200px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 48px auto 0;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .next-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .next-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Rubii.ai</div>
+        <div class="user-avatar">U</div>
+    </header>
+    
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>角色类型</h3>
+            <ul class="character-types">
+                <li class="character-type active">
+                    <span>👥</span> 朋友
+                </li>
+                <li class="character-type">
+                    <span>📚</span> 导师
+                </li>
+                <li class="character-type">
+                    <span>💕</span> 伴侣
+                </li>
+                <li class="character-type">
+                    <span>🎭</span> 角色扮演
+                </li>
+                <li class="character-type">
+                    <span>🔧</span> 自定义
+                </li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">创建你的AI角色</h1>
+                <p class="content-subtitle">让我们一起创造一个独特的AI伙伴</p>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>⚡</span> 选择角色性别
+                </h2>
+                <div class="gender-selection">
+                    <div class="gender-option selected">
+                        <div class="gender-emoji">👨</div>
+                        <div class="gender-label">男性</div>
+                    </div>
+                    <div class="gender-option">
+                        <div class="gender-emoji">👩</div>
+                        <div class="gender-label">女性</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>🎨</span> 创建角色外观
+                </h2>
+                <div class="image-creation-options">
+                    <div class="creation-option">
+                        <div class="option-icon">📁</div>
+                        <div class="option-title">Album</div>
+                        <div class="option-description">上传本地图片<br>支持JPG、PNG格式</div>
+                    </div>
+                    <div class="creation-option selected">
+                        <div class="option-icon">✨</div>
+                        <div class="option-title">Summon</div>
+                        <div class="option-description">AI智能生成<br>基于描述创建形象</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="next-button">下一步</button>
+        </main>
+    </div>
+</body>
+</html>
